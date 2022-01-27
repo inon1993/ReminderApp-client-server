@@ -15,6 +15,24 @@ router.get('/', (req, res) => {
     });
 });
 
+router.post('/save', (req, res) => {
+    console.log('Body: ', req.body);
+
+    const data = req.body;
+
+    const newReminder = new Reminder(data);
+
+    newReminder.save((err) => {
+        if(err) {
+            res.status(500).json({ msg: 'Sorry, internal server errors.'});
+        } else {
+            res.json({
+                msg:'We received your data!'
+            });
+        }
+    });
+});
+
 router.get('/name', (req, res) => {
     const data = {
         username: 'bobo',
