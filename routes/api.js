@@ -7,7 +7,7 @@ const Reminder = require('../models/reminderDB');
 router.get('/', (req, res) => {
     Reminder.find({})
     .then((data) => {
-        console.log('Data: ', data);
+        // console.log('Data: ', data);
         res.json(data);
     })
     .catch((err) => {
