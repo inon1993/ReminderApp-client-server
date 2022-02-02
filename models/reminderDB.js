@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const remindersSchema = new mongoose.Schema({
-    title: String,
-    body: String
+  title: String,
+  body: String,
 });
 
 const Reminder = mongoose.model("Reminder", remindersSchema);
