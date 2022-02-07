@@ -3,7 +3,7 @@ const { send } = require("express/lib/response");
 const { Mongoose } = require("mongoose");
 const router = express.Router();
 const Reminder = require("../models/reminderDB");
-const User = require('../models/reminderDBUsers');
+const User = require("../models/reminderDBUsers");
 
 router.get("/", (req, res) => {
   Reminder.find({})
@@ -53,20 +53,26 @@ router.post("/signup", (req, res) => {
 
   const data = req.body;
 
-  // if(data.fname.trim().length < 1) {
-  //   res.send('Invalid first name.');
-  //   return (console.log('Invalid first name!'))
-  // };
+  User.findOne({ username: data.username }, (err, foundUser) => {
+    if (!foundUser) {
+      const newUser = new User(data);
 
-  const newReminder = new User(data);
-
-  newReminder.save((err) => {
-    if (err) {
-      res.status(500).json({ msg: "Sorry, internal server errors." });
-    } else {
-      res.json({
-        msg: "We received your data!",
+      newUser.save((err) => {
+        if (err) {
+          res.status(500).json({ msg: "Sorry, internal server errors." });
+        } else {
+          res.json({
+            msg: "We received your data!",
+          });
+        }
       });
+    }
+    if (foundUser) {
+      console.log("username exist");
+      res.json({ msg: "Username already exists" });
+    }
+    if (err) {
+      res.status(500).json({ msg: "An error!!!!!!" });
     }
   });
 });
