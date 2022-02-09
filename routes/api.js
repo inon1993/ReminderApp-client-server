@@ -61,30 +61,38 @@ router.post("/signup", (req, res) => {
 
   User.findOne({ username: data.username }, (err, foundUser) => {
     if (!foundUser) {
-
-      User.register({fname: data.fname, lname: data.lname, email: data.email, username: data.username}, data.password, (err, user) => {
-        if(err) {
-          console.log(err);
-          res.status(500).json({msg: 'Something went wrong in server.'})
-        } else {
-          passport.authenticate('local')(req, res, () => {
-            res.json({msg: 'Successfully saved user.'})
-          })
+      User.register(
+        {
+          fname: data.fname,
+          lname: data.lname,
+          email: data.email,
+          username: data.username,
+        },
+        data.password,
+        (err, user) => {
+          if (err) {
+            console.log(err);
+            res.status(500).json({ msg: "Something went wrong in server." });
+          } else {
+            passport.authenticate("local")(req, res, () => {
+              res.json({ msg: "Successfully saved user." });
+            });
+          }
         }
-      })
+      );
     }
-      // const newUser = new User(data);
+    // const newUser = new User(data);
 
-      // newUser.save((err) => {
-      //   if (err) {
-      //     res.status(500).json({ msg: "Sorry, internal server errors." });
-      //   } else {
-      //     res.json({
-      //       msg: "We received your data!",
-      //     });
-      //   }
-      // });
-    
+    // newUser.save((err) => {
+    //   if (err) {
+    //     res.status(500).json({ msg: "Sorry, internal server errors." });
+    //   } else {
+    //     res.json({
+    //       msg: "We received your data!",
+    //     });
+    //   }
+    // });
+
     if (foundUser) {
       console.log("username exist");
       res.json({ msg: "Username already exists" });
@@ -95,35 +103,49 @@ router.post("/signup", (req, res) => {
   });
 });
 
-router.post('/login', (req, res) => {
+router.post("/login", (req, res) => {
   console.log(req.body);
 
   const user = new User({
     username: req.body.username,
-    password: req.body.password
+    password: req.body.password,
   });
 
   req.login(user, (err) => {
-    if(err) {
+    if (err) {
       console.log(err);
     } else {
-      passport.authenticate('local')(req, res, () => {
-        console.log('Login successfully!!');
-        res.json({msg: 'Login was successfull'});
+      passport.authenticate("local")(req, res, () => {
+        console.log("Login successfully!!");
+        User.findOne({ username: user.username }, (err, loginUser) => {
+          if (!err) {
+            res.json({
+              fname: loginUser.fname,
+              lname: loginUser.lname,
+              email: loginUser.email,
+              username: loginUser.username,
+              msg: "Login was successfull",
+            });
+          } else {
+            console.log(err);
+          }
+        });
+        // res.json({ msg: "" });
       });
     }
   });
 });
 
-router.get('/auth', (req, res) => {
-  if(req.isAuthenticated()) {
-    res.json({msg: 'User is authenticated.'})
+router.get("/auth", (req, res) => {
+  console.log(res.body);
+  if (req.isAuthenticated()) {
+    res.json({ msg: "User is authenticated." });
   }
 });
 
-router.get('/logout', (req, res) => {
+router.get("/logout", (req, res) => {
   req.logout();
-  res.json({msg: 'Logout is successfull.'});
+  res.json({ msg: "Logout is successfull." });
 });
 
 module.exports = router;
