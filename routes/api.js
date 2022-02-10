@@ -12,9 +12,8 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 router.get("/", (req, res) => {
-  Reminder.find({})
+  Reminder.find({ username: req.query.username })
     .then((data) => {
-      // console.log('Data: ', data);
       res.json(data);
     })
     .catch((err) => {
@@ -75,7 +74,13 @@ router.post("/signup", (req, res) => {
             res.status(500).json({ msg: "Something went wrong in server." });
           } else {
             passport.authenticate("local")(req, res, () => {
-              res.json({ msg: "Successfully saved user." });
+              res.json({
+                fname: req.user.fname,
+                lname: req.user.lname,
+                email: req.user.email,
+                username: req.user.username,
+                msg: "Successfully saved user.",
+              });
             });
           }
         }
@@ -116,6 +121,7 @@ router.post("/login", (req, res) => {
       console.log(err);
     } else {
       passport.authenticate("local")(req, res, () => {
+        // console.log(res);
         console.log("Login successfully!!");
         User.findOne({ username: user.username }, (err, loginUser) => {
           if (!err) {
@@ -130,16 +136,20 @@ router.post("/login", (req, res) => {
             console.log(err);
           }
         });
-        // res.json({ msg: "" });
       });
     }
   });
 });
 
 router.get("/auth", (req, res) => {
-  console.log(res.body);
   if (req.isAuthenticated()) {
-    res.json({ msg: "User is authenticated." });
+    res.json({
+      fname: req.user.fname,
+      lname: req.user.lname,
+      email: req.user.email,
+      username: req.user.username,
+      msg: "User is authenticated.",
+    });
   }
 });
 
