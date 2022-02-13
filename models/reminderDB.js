@@ -4,6 +4,7 @@ const remindersSchema = new mongoose.Schema({
   title: String,
   body: String,
   date: String,
+  time: String,
   username: String,
 });
 

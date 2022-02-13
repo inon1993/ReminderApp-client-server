@@ -5,6 +5,7 @@ const passport = require("passport");
 const router = express.Router();
 const Reminder = require("../models/reminderDB");
 const User = require("../models/reminderDBUsers");
+const sgMail = require("@sendgrid/mail");
 
 passport.use(User.createStrategy());
 
@@ -32,6 +33,40 @@ router.post("/save", (req, res) => {
     if (err) {
       res.status(500).json({ msg: "Sorry, internal server errors." });
     } else {
+      const API_KEY =
+        "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";
+      sgMail.setApiKey(API_KEY);
+      User.findOne({ username: data.username }, (err, foundUser) => {
+        if (!err) {
+          console.log(foundUser);
+          const date = new Date(data.date);
+          console.log("ddd " + date);
+          const time = data.time;
+          const dateTime = `${date} ${time}`;
+          const dt = new Date(dateTime);
+          console.log("dt" + dt);
+          const unixTimeStamp = Math.floor(dt.getTime() / 1000);
+          console.log(unixTimeStamp);
+          const message = {
+            to: foundUser.email,
+            from: {
+              name: "ReminderApp",
+              email: "inon1993@gmail.com",
+            },
+            subject: data.title,
+            text: data.body,
+            send_at: unixTimeStamp,
+          };
+          sgMail
+            .send(message)
+            .then((response) => {
+              console.log(message);
+              console.log("Email sent...");
+            })
+            .catch((error) => console.log(error.message));
+        }
+      });
+
       res.json({
         msg: "We received your data!",
       });
