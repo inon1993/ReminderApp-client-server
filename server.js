@@ -6,8 +6,15 @@ const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const bodyParser = require('body-parser');
+// const ejs = require('ejs');
 
 const app = express();
+
+app.use(bodyParser.urlencoded({extended: true}));
+
+// app.use('view engine', 'ejs');
+
 const PORT = process.env.PORT || 8080;
 
 const routes = require("./routes/api");

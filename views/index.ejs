@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/emailStyle.css">
+    <title>ReminderApp</title>
+
+    <style>
+        .header-logo {
+            background-color: #9dcdfa;
+            height: auto;
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .logo {
+            font-family: cursive;
+            font-size: 20px;
+            color: #0b75d8;
+        }
+
+        .title {
+            color: black;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 40px;
+            font-weight: bold;
+            text-align: center;
+}
+
+        .body {
+            color: rgb(31, 31, 31);
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 18px;
+            font-weight: normal;
+            text-align: center;
+        }
+
+        .footer {
+            height: auto;
+            background-color: #9dcdfa;
+            color: white;
+            font-family: Arial,Helvetica,sans-serif;
+            font-size: 11px;
+            text-align: center;
+            padding: 35px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-logo"><span class="logo">ReminderApp</span></div>
+    <div><h1 class="title"><%= title %></h1></div>
+    <div><h4 class="body"><%= body %></h4></div>
+    <div class="footer"><%= year %> ReminderApp. All rights reserved.</div>    
+    
+</body>
+</html>

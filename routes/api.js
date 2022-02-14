@@ -7,6 +7,7 @@ const Reminder = require("../models/reminderDB");
 const User = require("../models/reminderDBUsers");
 // const sgMail = require("@sendgrid/mail");
 const nodemailer = require('nodemailer');
+const ejs = require('ejs');
 
 passport.use(User.createStrategy());
 
@@ -84,21 +85,49 @@ router.post("/save", (req, res) => {
 
           User.findOne({username: data.username}, (err, foundUser) => {
             if(!err) {
-              let mailOptions = {
-              from: 'reminderappmailing@gmail.com',
-              to: foundUser.email,
-              subject: data.title,
-              text: data.body,
+              const year = new Date();
+              ejs.renderFile("views/index.ejs", { title: data.title, body: data.body, year: year.getFullYear() }, function (err, page) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    let mainOptions = {
+                        from: 'reminderappmailing@gmail.com',
+                        to: foundUser.email,
+                        subject: data.title,
+                        html: page,
+                    };
+            
+                    transporter.sendMail(mainOptions, function (err, info) {
+                      if (err) {
+                        console.log("ERRRRRRR");
+                        res.json({
+                          msg: 'fail'
+                        })
+                      } else {
+                        console.log("WORRRRRRRRRK");
+                        res.json({
+                          msg: 'success'
+                        })
+                      }
+                  });
+                  }
+              });
+
+              // let mailOptions = {
+              // from: 'reminderappmailing@gmail.com',
+              // to: foundUser.email,
+              // subject: data.title,
+              // text: data.body,
               }
 
-              transporter.sendMail(mailOptions, (err, d) => {
-                if(err) {
-                  console.log('Erorrrrrrrr');
-                } else {
-                  console.log('Email sent!!!!');
-                }
-              })
-            }
+              // transporter.sendMail(mailOptions, (err, d) => {
+              //   if(err) {
+              //     console.log('Erorrrrrrrr');
+              //   } else {
+              //     console.log('Email sent!!!!');
+              //   }
+              // })
+            // }
           });
         }
       });
