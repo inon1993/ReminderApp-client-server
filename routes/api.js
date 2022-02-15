@@ -6,9 +6,9 @@ const router = express.Router();
 const Reminder = require("../models/reminderDB");
 const User = require("../models/reminderDBUsers");
 // const sgMail = require("@sendgrid/mail");
-const nodemailer = require('nodemailer');
-const nodemailerMailgun = require('nodemailer-mailgun-transport');
-const ejs = require('ejs');
+const nodemailer = require("nodemailer");
+const nodemailerMailgun = require("nodemailer-mailgun-transport");
+const ejs = require("ejs");
 
 passport.use(User.createStrategy());
 
@@ -18,9 +18,9 @@ passport.deserializeUser(User.deserializeUser());
 // g6nkuqkyZ98sh-u
 const auth = {
   auth: {
-    api_key: process.env.API_KET,
+    api_key: process.env.API_KEY,
     domain: process.env.DOMAIN,
-  }
+  },
 };
 
 let transporter = nodemailer.createTransport(nodemailerMailgun(auth));
@@ -32,8 +32,6 @@ let transporter = nodemailer.createTransport(nodemailerMailgun(auth));
 //     pass: 'reminder1050650',
 //   }
 // })
-
-
 
 router.get("/", (req, res) => {
   Reminder.find({ username: req.query.username })
@@ -57,7 +55,7 @@ router.post("/save", (req, res) => {
       res.status(500).json({ msg: "Sorry, internal server errors." });
     } else {
       // const API_KEY =
-      //   "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";
+      //   process.env.API{_KEY_SENDGRID;
       // sgMail.setApiKey(API_KEY);
       // User.findOne({ username: data.username }, (err, foundUser) => {
       //   if (!err) {
@@ -66,107 +64,112 @@ router.post("/save", (req, res) => {
       //     const body = data.body;
       //     const date = `${data.date} ${data.time}`;
       //     const dateTime = new Date(date);
-          // console.log("ddd " + date);
-          // const time = data.time;
-          // const dateTime = `${date} ${time}`;
-          // console.log(dateTime);
-          // const dt = new Date(dateTime);
-          // console.log("dt" + dt);
-          // const unixTimeStamp = Math.floor(dateTime.getTime() / 1000);
-          // console.log(unixTimeStamp);
-          // const message = {
-          //   to: foundUser.email,
-          //   from: {
-          //     name: "ReminderApp",
-          //     email: "inon1993@gmail.com",
-          //   },
-          //   subject: data.title,
-          //   text: body,
-          //   send_at: unixTimeStamp,
-          //   template_id: 'd-f8a005ae6c5240e5a2bbac7649cabedf',
-          // };
-          // sgMail
-          //   .send(message)
-          //   .then((response) => {
-          //     console.log(message);
-          //     console.log("Email sent...");
-          //   })
-          //   .catch((error) => console.log(error.message));
+      // console.log("ddd " + date);
+      // const time = data.time;
+      // const dateTime = `${date} ${time}`;
+      // console.log(dateTime);
+      // const dt = new Date(dateTime);
+      // console.log("dt" + dt);
+      // const unixTimeStamp = Math.floor(dateTime.getTime() / 1000);
+      // console.log(unixTimeStamp);
+      // const message = {
+      //   to: foundUser.email,
+      //   from: {
+      //     name: "ReminderApp",
+      //     email: "inon1993@gmail.com",
+      //   },
+      //   subject: data.title,
+      //   text: body,
+      //   send_at: unixTimeStamp,
+      //   template_id: 'd-f8a005ae6c5240e5a2bbac7649cabedf',
+      // };
+      // sgMail
+      //   .send(message)
+      //   .then((response) => {
+      //     console.log(message);
+      //     console.log("Email sent...");
+      //   })
+      //   .catch((error) => console.log(error.message));
 
-          User.findOne({username: data.username}, (err, foundUser) => {
-            if(!err) {
-              const year = new Date();
-              ejs.renderFile("views/index.ejs", { title: data.title, body: data.body, year: year.getFullYear() }, function (err, page) {
-                if (err) {
-                    console.log(err);
-                } else {
-                  const date = `${data.date} ${data.time}`;
-                  const dateTime = new Date(date);
-                  console.log(dateTime);
-                  const mailOptions = {
-                    from: 'reminderappmailing@gmail.com',
-                    to: foundUser.email,
-                    subject: data.title,
-                    html: page,
-                    "o:deliverytime": 'Tue, 15 Feb 2022 16:44:10 -0000',
-                  };
+      User.findOne({ username: data.username }, (err, foundUser) => {
+        if (!err) {
+          const year = new Date();
+          ejs.renderFile(
+            "views/index.ejs",
+            { title: data.title, body: data.body, year: year.getFullYear() },
+            function (err, page) {
+              if (err) {
+                console.log(err);
+              } else {
+                const date = `${data.date} ${data.time}`;
+                const dt = new Date(Date.UTC(data.date));
+                console.log(date);
+                const dateTime = new Date(date);
+                console.log(dateTime);
+                console.log(dateTime);
+                const mailOptions = {
+                  from: "reminderappmailing@gmail.com",
+                  to: foundUser.email,
+                  subject: data.title,
+                  html: page,
+                  // "o:deliverytime": "Tue, 15 Feb 2022 16:44:10 -0000",
+                };
 
-                  transporter.sendMail(mailOptions, (err, info) => {
-                    if(err) {
-                      console.log('Error: ', err);
-                    } else {
-                      console.log('Email Sent!!');
-                    }
-                  });
-
-                  //   let mainOptions = {
-                  //       from: 'reminderappmailing@gmail.com',
-                  //       to: foundUser.email,
-                  //       subject: data.title,
-                  //       html: page,
-                  //   };
-            
-                  //   transporter.sendMail(mainOptions, function (err, info) {
-                  //     if (err) {
-                  //       console.log("ERRRRRRR");
-                  //       res.json({
-                  //         msg: 'fail'
-                  //       })
-                  //     } else {
-                  //       console.log("WORRRRRRRRRK");
-                  //       res.json({
-                  //         msg: 'success'
-                  //       })
-                  //     }
-                  // });
+                transporter.sendMail(mailOptions, (err, info) => {
+                  if (err) {
+                    console.log("Error: ", err);
+                  } else {
+                    console.log("Email Sent!!");
                   }
-              });
+                });
 
-              // let mailOptions = {
-              // from: 'reminderappmailing@gmail.com',
-              // to: foundUser.email,
-              // subject: data.title,
-              // text: data.body,
+                //   let mainOptions = {
+                //       from: 'reminderappmailing@gmail.com',
+                //       to: foundUser.email,
+                //       subject: data.title,
+                //       html: page,
+                //   };
+
+                //   transporter.sendMail(mainOptions, function (err, info) {
+                //     if (err) {
+                //       console.log("ERRRRRRR");
+                //       res.json({
+                //         msg: 'fail'
+                //       })
+                //     } else {
+                //       console.log("WORRRRRRRRRK");
+                //       res.json({
+                //         msg: 'success'
+                //       })
+                //     }
+                // });
               }
+            }
+          );
 
-              // transporter.sendMail(mailOptions, (err, d) => {
-              //   if(err) {
-              //     console.log('Erorrrrrrrr');
-              //   } else {
-              //     console.log('Email sent!!!!');
-              //   }
-              // })
-            // }
-          });
+          // let mailOptions = {
+          // from: 'reminderappmailing@gmail.com',
+          // to: foundUser.email,
+          // subject: data.title,
+          // text: data.body,
         }
-      });
 
-      res.json({
-        msg: "We received your data!",
+        // transporter.sendMail(mailOptions, (err, d) => {
+        //   if(err) {
+        //     console.log('Erorrrrrrrr');
+        //   } else {
+        //     console.log('Email sent!!!!');
+        //   }
+        // })
+        // }
       });
-    
+    }
   });
 
+  res.json({
+    msg: "We received your data!",
+  });
+});
 
 router.delete("/delete", (req, res) => {
   const data = req.body.id;
