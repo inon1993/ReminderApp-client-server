@@ -7,6 +7,7 @@ const Reminder = require("../models/reminderDB");
 const User = require("../models/reminderDBUsers");
 // const sgMail = require("@sendgrid/mail");
 const nodemailer = require('nodemailer');
+const nodemailerMailgun = require('nodemailer-mailgun-transport');
 const ejs = require('ejs');
 
 passport.use(User.createStrategy());
@@ -14,14 +15,23 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
-let transporter = nodemailer.createTransport({
-  service: 'gmail',
+// g6nkuqkyZ98sh-u
+const auth = {
   auth: {
-    user: 'reminderappmailing@gmail.com',
-    pass: 'reminder1050650',
+    api_key: process.env.API_KET,
+    domain: process.env.DOMAIN,
   }
-})
+};
+
+let transporter = nodemailer.createTransport(nodemailerMailgun(auth));
+
+// let transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: 'reminderappmailing@gmail.com',
+//     pass: 'reminder1050650',
+//   }
+// })
 
 
 
@@ -90,26 +100,45 @@ router.post("/save", (req, res) => {
                 if (err) {
                     console.log(err);
                 } else {
-                    let mainOptions = {
-                        from: 'reminderappmailing@gmail.com',
-                        to: foundUser.email,
-                        subject: data.title,
-                        html: page,
-                    };
-            
-                    transporter.sendMail(mainOptions, function (err, info) {
-                      if (err) {
-                        console.log("ERRRRRRR");
-                        res.json({
-                          msg: 'fail'
-                        })
-                      } else {
-                        console.log("WORRRRRRRRRK");
-                        res.json({
-                          msg: 'success'
-                        })
-                      }
+                  const date = `${data.date} ${data.time}`;
+                  const dateTime = new Date(date);
+                  console.log(dateTime);
+                  const mailOptions = {
+                    from: 'reminderappmailing@gmail.com',
+                    to: foundUser.email,
+                    subject: data.title,
+                    html: page,
+                    "o:deliverytime": 'Tue, 15 Feb 2022 16:44:10 -0000',
+                  };
+
+                  transporter.sendMail(mailOptions, (err, info) => {
+                    if(err) {
+                      console.log('Error: ', err);
+                    } else {
+                      console.log('Email Sent!!');
+                    }
                   });
+
+                  //   let mainOptions = {
+                  //       from: 'reminderappmailing@gmail.com',
+                  //       to: foundUser.email,
+                  //       subject: data.title,
+                  //       html: page,
+                  //   };
+            
+                  //   transporter.sendMail(mainOptions, function (err, info) {
+                  //     if (err) {
+                  //       console.log("ERRRRRRR");
+                  //       res.json({
+                  //         msg: 'fail'
+                  //       })
+                  //     } else {
+                  //       console.log("WORRRRRRRRRK");
+                  //       res.json({
+                  //         msg: 'success'
+                  //       })
+                  //     }
+                  // });
                   }
               });
 

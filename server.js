@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const { test } = require("media-typer");
 const mongoose = require("mongoose");
@@ -23,7 +24,7 @@ app.use(morgan("tiny"));
 
 app.use(
   session({
-    secret: "Our little secret.", ////////////////////need to put secret in .env file!!
+    secret: process.env.SECRET, ////////////////////need to put secret in .env file!!
     resave: false,
     saveUninitialized: false,
   })
