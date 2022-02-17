@@ -6,7 +6,7 @@ const router = express.Router();
 const Reminder = require("../models/reminderDB");
 const User = require("../models/reminderDBUsers");
 const sgMail = require("@sendgrid/mail");
-const client = require('@sendgrid/client');
+const client = require("@sendgrid/client");
 // const nodemailer = require("nodemailer");
 // const nodemailerMailgun = require("nodemailer-mailgun-transport");
 const ejs = require("ejs");
@@ -59,20 +59,19 @@ router.post("/save", (req, res) => {
     } else {
       const API_KEY = process.env.API_KEY_SENDGRID;
       sgMail.setApiKey(API_KEY);
-      
+
       User.findOne({ username: data.username }, (err, foundUser) => {
         if (!err) {
-
           // const headers = {
           //   "on-behalf-of": "ReminderApp"
           // };
-          
+
           // const request = {
           //   url: `/v3/mail/batch`,
           //   method: 'POST',
           //   headers: headers
           // }
-          
+
           // client.request(request)
           //   .then(([response, body]) => {
           //     console.log(response.statusCode);
@@ -91,9 +90,6 @@ router.post("/save", (req, res) => {
                 console.log(err);
               } else {
                 console.log(foundUser);
-
-                
-
 
                 // const title = data.title;
                 // const body = data.body;
@@ -117,28 +113,28 @@ router.post("/save", (req, res) => {
                   html: page,
                   send_at: unixTimeStamp,
                   custom_args: {
-                    "item_id" : "1234"
-                  }
+                    item_id: "12345",
+                  },
                   // template_id: 'd-f8a005ae6c5240e5a2bbac7649cabedf',
                 };
-              sgMail
-              .send(message)
-              .then((response) => {
-                console.log(message);
-                console.log("Email sent...");
-              })
-              .catch((error) => console.log(error.message));
+                sgMail
+                  .send(message)
+                  .then((response) => {
+                    console.log(message);
+                    console.log("Email sent...");
+                  })
+                  .catch((error) => console.log(error.message));
 
-      // User.findOne({ username: data.username }, (err, foundUser) => {
-      //   if (!err) {
-          // const year = new Date();
-          // ejs.renderFile(
-          //   "views/index.ejs",
-          //   { title: data.title, body: data.body, year: year.getFullYear() },
-          //   function (err, page) {
-          //     if (err) {
-          //       console.log(err);
-          //     } else {
+                // User.findOne({ username: data.username }, (err, foundUser) => {
+                //   if (!err) {
+                // const year = new Date();
+                // ejs.renderFile(
+                //   "views/index.ejs",
+                //   { title: data.title, body: data.body, year: year.getFullYear() },
+                //   function (err, page) {
+                //     if (err) {
+                //       console.log(err);
+                //     } else {
                 ///////////////////////////////////////////MAILGUN////////////////////
                 // const date = `${data.date} ${data.time}`;
                 // const dt = new Date(Date.UTC(data.date));
@@ -151,7 +147,7 @@ router.post("/save", (req, res) => {
                 //   to: foundUser.email,
                 //   subject: data.title,
                 //   html: page,
-                  // "o:deliverytime": "Tue, 15 Feb 2022 16:44:10 -0000",
+                // "o:deliverytime": "Tue, 15 Feb 2022 16:44:10 -0000",
                 // };
 
                 // transporter.sendMail(mailOptions, (err, info) => {
@@ -161,7 +157,6 @@ router.post("/save", (req, res) => {
                 //     console.log("Email Sent!!");
                 //   }
                 // });
-
 
                 ///////////////////////////////////////GMAIL////////////////////////////////
                 //   let mainOptions = {
@@ -214,6 +209,36 @@ router.post("/save", (req, res) => {
 
 router.delete("/delete", (req, res) => {
   const data = req.body.id;
+
+  const headers = {
+    Authorization: process.env.API_KEY_SENDGRID,
+    "on-behalf-of":
+      "The subuser's username. This header generates the API call as if the subuser account was making the call.",
+  };
+
+  const dataDel = {
+    custom_args: {
+      item_id: "12345",
+    },
+    status: "pause",
+  };
+
+  const request = {
+    url: `/v3/user/scheduled_sends`,
+    method: "POST",
+    headers: headers,
+    body: dataDel,
+  };
+
+  client
+    .request(request)
+    .then(([response, body]) => {
+      console.log(response.statusCode);
+      console.log(response.body);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 
   Reminder.findByIdAndRemove(data, (err) => {
     if (!err) {
@@ -307,6 +332,9 @@ router.post("/login", (req, res) => {
             });
           } else {
             console.log(err);
+            res.json({
+              msg: "Username or password is incorrect.",
+            });
           }
         });
       });
