@@ -351,6 +351,8 @@ router.get("/auth", (req, res) => {
       username: req.user.username,
       msg: "User is authenticated.",
     });
+  } else {
+    res.json({msg: 'user is not auth!'});
   }
 });
 
