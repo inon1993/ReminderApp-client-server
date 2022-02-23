@@ -11,14 +11,15 @@
       .header-logo {
         background-color: #edf3f3;
         height: auto;
-        padding: 30px 0;
+        padding: 0;
         text-align: center;
       }
 
       .logo {
-        font-family: cursive;
-        font-size: 20px;
-        color: #518679;
+        /* font-family: cursive; */
+        /* font-size: 20px;
+        color: #518679; */
+        height: 120px;
       }
 
       .title {
@@ -40,16 +41,18 @@
       .footer {
         height: auto;
         background-color: #edf3f3;
-        color:#518679;
+        color: #518679;
         font-family: Arial, Helvetica, sans-serif;
         font-size: 11px;
         text-align: center;
-        padding: 35px 0;
+        padding: 55px 0;
       }
     </style>
   </head>
   <body>
-    <div class="header-logo"><span class="logo">ReminderApp</span></div>
+    <div class="header-logo">
+      <img class="logo" src="https://i.ibb.co/fqxJQ21/app-logo.png" />
+    </div>
     <div><h1 class="title"><%= title %></h1></div>
     <div><h4 class="body"><%= body %></h4></div>
     <div class="footer"><%= year %> ReminderApp. All rights reserved.</div>

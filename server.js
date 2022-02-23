@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const { test } = require("media-typer");
 const mongoose = require("mongoose");
@@ -7,12 +7,13 @@ const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 // const ejs = require('ejs');
 
 const app = express();
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 // app.use('view engine', 'ejs');
 
