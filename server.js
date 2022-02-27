@@ -25,7 +25,7 @@ app.use(morgan("tiny"));
 
 app.use(
   session({
-    secret: process.env.SECRET, ////////////////////need to put secret in .env file!!
+    secret: process.env.SECRET, /////////////////////need to put secret in .env file!!
     resave: false,
     saveUninitialized: false,
   })
@@ -36,7 +36,7 @@ app.use(passport.session());
 
 // const MONGODB_URI = 'mongodb+srv://admin-inon:inon1050650@reminder.ccizi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 
-mongoose.connect(/*MONGODB_URI ||*/ "mongodb://localhost:27017/ReminderAppDB");
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/ReminderAppDB");
 mongoose.connection.on("connected", () => {
   console.log("Mongoose is connected.");
 });
